@@ -1,0 +1,25 @@
+#!/usr/bin/ruby
+require "digest"
+require "tmpdir"
+require "pathname"
+
+stable = Pathname(ARGV.fetch(1))
+stable.mkpath
+mac = Pathname(ARGV.fetch(0))
+builds = {
+  "desk-calendar-mac"             => %w[build.sh main.swift Info.plist entitlements.plist],
+  "desk-calendar-availability-v1" => %w[build-availability.sh availability-reader.swift AvailabilityInfo.plist entitlements.plist],
+  "desk-reminders-mac"            => %w[build-reminders.sh reminders.swift reminders-Info.plist reminders-entitlements.plist],
+}
+builds.each do |binary, files|
+  fingerprint = Digest::SHA256.hexdigest(files.map { |f| Digest::SHA256.file(mac/f).hexdigest }.join)
+  stamp = stable/".#{binary}.sha256"
+  next if (stable/binary).executable? && stamp.exist? && stamp.read.chomp == fingerprint
+
+  Dir.mktmpdir("build-", stable) do |temp|
+    system("/bin/bash", (mac/files.first).to_s, temp, exception: true)
+    File.rename(File.join(temp, binary), stable/binary)
+    File.write(File.join(temp, "stamp"), fingerprint)
+    File.rename(File.join(temp, "stamp"), stamp)
+  end
+end
