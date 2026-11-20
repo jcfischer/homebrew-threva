@@ -1,8 +1,8 @@
 class Threva < Formula
   desc "Local workspace for mail, meetings, and ongoing projects"
   homepage "https://github.com/jcfischer/threva-app"
-  url "https://github.com/jcfischer/threva-app/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "f82a50a421daf66cf7c20099e8ca10ec024595c5e8d99ede90b621edecf4f82f"
+  url "https://github.com/jcfischer/threva-app/archive/refs/tags/v0.1.1.tar.gz"
+  sha256 "9dbc253438420124997eaddee3206f1d3f84e3bf66ff56a030a9475a95e1ebc0"
   license "AGPL-3.0-only"
 
   depends_on "bun"
